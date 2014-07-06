@@ -79,7 +79,7 @@ namespace HBase.Stargate.Client.Api
     /// </summary>
     protected readonly IScannerOptionsConverter ScannerConverter;
 
-    /// <summary>
+      /// <summary>
     ///   Initializes a new instance of the <see cref="Stargate" /> class.
     /// </summary>
     /// <param name="options">The options.</param>
@@ -442,15 +442,20 @@ namespace HBase.Stargate.Client.Api
 
     T GetScannerResultInternal<T>(IScanner scanner, Func<Method, string, string, string, string, HttpStatusCode[], T> action)
     {
-      return action(Method.GET, scanner.Resource, Options.ContentType, null, null, new[] { HttpStatusCode.OK, HttpStatusCode.NoContent });
+      return action(Method.GET, scanner.Resource, Options.ContentType, null, null, new[] { HttpStatusCode.OK, HttpStatusCode.NoContent, HttpStatusCode.BadGateway });
     }
 
     CellSet ProcessScannerResultResponse(IRestResponse response, IScanner scanner)
     {
-      return response.StatusCode == HttpStatusCode.NoContent ? null : new CellSet(Converter.ConvertCells(response.Content, scanner.Table));
+        if (response.StatusCode == HttpStatusCode.NoContent || response.StatusCode == HttpStatusCode.BadGateway)
+        {
+            return null;
+        }
+        
+        return new CellSet(Converter.ConvertCells(response.Content, scanner.Table));
     }
 
-    /// <summary>
+      /// <summary>
     ///   Creates a new stargate with the specified options.
     /// </summary>
     /// <param name="serverUrl">The server URL.</param>
@@ -551,6 +556,10 @@ namespace HBase.Stargate.Client.Api
     {
       IRestRequest request = RestSharp.CreateRequest(resource, method)
         .AddHeader(HttpRequestHeader.Accept.ToString(), acceptType);
+        if (Options.Credentials != null)
+        {
+            request.Credentials = Options.Credentials;
+        }
 
       if (!string.IsNullOrEmpty(content))
       {

@@ -25,7 +25,9 @@ using HBase.Stargate.Client.Api;
 
 namespace HBase.Stargate.Client.Config
 {
-	/// <summary>
+    using System.Net;
+
+    /// <summary>
 	///    Provides an XML configuration-based implementation of <see cref="IStargateOptions" />.
 	/// </summary>
 	public class StargateConfigOptions : ConfigurationElement, IStargateOptions
@@ -33,6 +35,8 @@ namespace HBase.Stargate.Client.Config
 		private const string _serverUrlName = "serverUrl";
 		private const string _contentTypeName = "contentType";
 		private const string _falseRowKeyName = "falseRowKey";
+
+        private const string _credentialsName = "credentials";
 
 		/// <summary>
 		///    Gets or sets the server URL.
@@ -73,7 +77,17 @@ namespace HBase.Stargate.Client.Config
 			set { this[_falseRowKeyName] = value; }
 		}
 
-		/// <summary>
+        /// <summary>
+        /// 
+        /// </summary>
+        [ConfigurationProperty(_credentialsName, IsRequired = false, DefaultValue = null)]
+        public ICredentials Credentials
+        {
+            get { return this[_credentialsName] as ICredentials; }
+            set { this[_credentialsName] = value; }
+        }
+
+        /// <summary>
 		///    Gets a value indicating whether the <see cref="T:System.Configuration.ConfigurationElement" /> object is read-only.
 		/// </summary>
 		/// <returns>

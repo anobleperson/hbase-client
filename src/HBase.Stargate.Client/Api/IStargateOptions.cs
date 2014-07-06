@@ -17,7 +17,9 @@
 
 namespace HBase.Stargate.Client.Api
 {
-	/// <summary>
+    using System.Net;
+
+    /// <summary>
 	///    Defines options for communicating with a Stargate instance.
 	/// </summary>
 	public interface IStargateOptions
@@ -45,5 +47,10 @@ namespace HBase.Stargate.Client.Api
 		///    The false row key.
 		/// </value>
 		string FalseRowKey { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        ICredentials Credentials { get; set; }
 	}
 }

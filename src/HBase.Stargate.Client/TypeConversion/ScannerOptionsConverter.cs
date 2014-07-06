@@ -25,7 +25,9 @@ using HBase.Stargate.Client.Api;
 
 namespace HBase.Stargate.Client.TypeConversion
 {
-	/// <summary>
+    using System.Linq;
+
+    /// <summary>
 	///    Provides a standard implementation of the
 	///    <see cref="IScannerOptionsConverter" /> interface.
 	/// </summary>
@@ -33,9 +35,11 @@ namespace HBase.Stargate.Client.TypeConversion
 	{
 		private const string _scannerName = "Scanner";
 		private const string _startRowName = "startRow";
-		private const string _stopRowName = "stopRow";
+		private const string _stopRowName = "endRow";
 		private const string _batchSizeName = "batch";
 		private const string _filterName = "filter";
+
+	    private const string _columnName = "column";
 		private readonly ICodec _codec;
 
 		/// <summary>
@@ -79,6 +83,16 @@ namespace HBase.Stargate.Client.TypeConversion
 				});
 			}
 
+		    if (options.Columns != null && options.Columns.Any())
+		    {
+		        foreach (var column in options.Columns)
+		        {
+                    xml.Add(new XElement(_columnName)
+                    {
+                        Value = _codec.Encode(column.Column+":"+column.Qualifier)
+                    });
+		        }
+		    }
 			return xml.ToString();
 		}
 	}

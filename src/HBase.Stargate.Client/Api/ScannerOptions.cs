@@ -21,7 +21,9 @@
 
 namespace HBase.Stargate.Client.Api
 {
-	/// <summary>
+    using HBase.Stargate.Client.Models;
+
+    /// <summary>
 	///    Encapsulates the options that can be set at scanner creation.
 	/// </summary>
 	public class ScannerOptions
@@ -65,5 +67,10 @@ namespace HBase.Stargate.Client.Api
 		///    The filter.
 		/// </value>
 		public IScannerFilter Filter { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public HBaseCellDescriptor[] Columns { get; set; }
 	}
 }
